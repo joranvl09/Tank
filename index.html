@@ -2,32 +2,94 @@
 <html>
 <head>
   <meta charset="UTF-8">
-  <title>Camera Test</title>
+  <title>AutoSplit Camera Test</title>
+  <script src="https://cdn.jsdelivr.net/npm/tesseract.js@4.0.2/dist/tesseract.min.js"></script>
   <style>
-    video, img { max-width: 100%; }
-    button { margin-top: 10px; padding: 10px; }
+    body {
+      font-family: Arial, sans-serif;
+      padding: 20px;
+      background-color: #f9fafb;
+      color: #111;
+      text-align: center;
+    }
+
+    h1 {
+      margin-bottom: 20px;
+      font-size: 1.8rem;
+      color: #2563eb;
+    }
+
+    button {
+      padding: 10px 20px;
+      margin: 10px 5px;
+      font-size: 1rem;
+      border-radius: 8px;
+      border: none;
+      background-color: #2563eb;
+      color: #fff;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    button:hover {
+      background-color: #1e40af;
+    }
+
+    video {
+      border: 2px solid #ccc;
+      border-radius: 12px;
+      max-width: 100%;
+      margin-top: 10px;
+    }
+
+    #photo {
+      margin-top: 15px;
+      border-radius: 12px;
+      max-width: 100%;
+      border: 2px solid #ccc;
+    }
+
+    #ocrText {
+      margin-top: 15px;
+      font-size: 1.1rem;
+      color: #333;
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
+
+    .buttons {
+      margin-top: 15px;
+    }
+
+    @media (min-width: 500px) {
+      .buttons {
+        display: flex;
+        justify-content: center;
+      }
+    }
   </style>
 </head>
 <body>
-  <h1>AutoSplit Camera Test</h1>
+  <h1>AutoSplit Camera</h1>
 
-  <button id="startCameraBtn">Open camera</button>
-  <button id="takePhotoBtn" disabled>Maak foto</button>
-
-  <div>
-    <video id="video" autoplay playsinline style="border:1px solid #ccc;"></video>
+  <div class="buttons">
+    <button id="startCameraBtn">Open camera</button>
+    <button id="takePhotoBtn" disabled>Maak foto</button>
   </div>
 
   <div>
-    <h2>Gemaakte foto:</h2>
-    <img id="photo" alt="Foto komt hier" />
+    <video id="video" autoplay playsinline></video>
   </div>
+
+  <img id="photo" alt="Foto komt hier" />
+  <div id="ocrText">Hier verschijnt de herkende tekst...</div>
 
   <script>
     const startCameraBtn = document.getElementById('startCameraBtn');
     const takePhotoBtn = document.getElementById('takePhotoBtn');
     const video = document.getElementById('video');
     const photo = document.getElementById('photo');
+    const ocrText = document.getElementById('ocrText');
 
     let stream;
 
@@ -41,16 +103,32 @@
       }
     });
 
-    takePhotoBtn.addEventListener('click', () => {
+    takePhotoBtn.addEventListener('click', async () => {
       if (!stream) return;
+
+      // Maak foto
       const canvas = document.createElement('canvas');
       canvas.width = video.videoWidth;
       canvas.height = video.videoHeight;
       const ctx = canvas.getContext('2d');
       ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-      photo.src = canvas.toDataURL('image/png');
+      const dataUrl = canvas.toDataURL('image/png');
+      photo.src = dataUrl;
+
+      // OCR uitvoeren
+      ocrText.textContent = 'Lezen van tekst... even geduld';
+      Tesseract.recognize(
+        dataUrl,
+        'eng', // Engelse letters, werkt ook voor nummers en punten
+        { logger: m => console.log(m) }
+      ).then(({ data: { text } }) => {
+        ocrText.textContent = text.trim(); // toont de herkende tekst
+      }).catch(err => {
+        ocrText.textContent = 'Fout bij OCR: ' + err.message;
+      });
     });
   </script>
 </body>
 </html>
+
 
