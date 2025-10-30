@@ -3,11 +3,10 @@
 <head>
   <meta charset="UTF-8">
   <title>AutoSplit Kalkulator</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
     body {
       font-family: Arial, sans-serif;
-      max-width: 500px;
-      margin: auto;
       padding: 20px;
       background: #f9fafb;
       color: #111;
@@ -16,19 +15,22 @@
     h1 {
       text-align: center;
       color: #2563eb;
+      font-size: 2rem;
     }
 
     label {
       font-weight: bold;
+      font-size: 1.2rem;
     }
 
     input, button {
-      padding: 10px;
-      margin: 5px 0;
       width: 100%;
-      font-size: 1rem;
-      border-radius: 8px;
+      font-size: 1.5rem;
+      padding: 15px;
+      margin: 8px 0;
+      border-radius: 10px;
       border: 1px solid #ccc;
+      box-sizing: border-box;
     }
 
     button {
@@ -36,6 +38,7 @@
       color: white;
       border: none;
       cursor: pointer;
+      transition: 0.2s;
     }
 
     button:hover {
@@ -46,15 +49,19 @@
       margin-top: 20px;
     }
 
-    .result {
-      margin-top: 20px;
-      background: #e5e7eb;
-      padding: 15px;
-      border-radius: 8px;
-    }
-
     ul {
       margin-top: 5px;
+      font-size: 1.2rem;
+      list-style-type: disc;
+      padding-left: 20px;
+    }
+
+    .result {
+      margin-top: 25px;
+      background: #e5e7eb;
+      padding: 20px;
+      border-radius: 12px;
+      font-size: 1.4rem;
     }
   </style>
 </head>
@@ -67,12 +74,14 @@
   <div class="person-section">
     <label>Joran:</label>
     <input type="number" id="joranInput" inputmode="decimal" pattern="[0-9]*">
+    <button onclick="addJoranKm()">Voeg km toe</button>
     <ul id="joranList"></ul>
   </div>
 
   <div class="person-section">
     <label>Timo:</label>
     <input type="number" id="timoInput" inputmode="decimal" pattern="[0-9]*">
+    <button onclick="addTimoKm()">Voeg km toe</button>
     <ul id="timoList"></ul>
   </div>
 
@@ -91,28 +100,27 @@
     const joranKm = [];
     const timoKm = [];
 
-    function saveKm(input, list, array) {
-      const val = parseFloat(input.value);
+    function addJoranKm() {
+      const val = parseFloat(joranInput.value);
       if (!isNaN(val)) {
-        array.push(val);
+        joranKm.push(val);
         const li = document.createElement('li');
         li.textContent = val + ' km';
-        list.appendChild(li);
-        input.value = '';
+        joranList.appendChild(li);
+        joranInput.value = '';
       }
     }
 
-    joranInput.addEventListener('keypress', (e) => {
-      if (e.key === 'Enter') {
-        saveKm(joranInput, joranList, joranKm);
+    function addTimoKm() {
+      const val = parseFloat(timoInput.value);
+      if (!isNaN(val)) {
+        timoKm.push(val);
+        const li = document.createElement('li');
+        li.textContent = val + ' km';
+        timoList.appendChild(li);
+        timoInput.value = '';
       }
-    });
-
-    timoInput.addEventListener('keypress', (e) => {
-      if (e.key === 'Enter') {
-        saveKm(timoInput, timoList, timoKm);
-      }
-    });
+    }
 
     calculateBtn.addEventListener('click', () => {
       const totalPrice = parseFloat(document.getElementById('totalPrice').value);
@@ -148,6 +156,3 @@
   </script>
 </body>
 </html>
-
-
-
