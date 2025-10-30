@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Camera Test</title>
+  <style>
+    video, img { max-width: 100%; }
+    button { margin-top: 10px; padding: 10px; }
+  </style>
+</head>
+<body>
+  <h1>AutoSplit Camera Test</h1>
+
+  <button id="startCameraBtn">Open camera</button>
+  <button id="takePhotoBtn" disabled>Maak foto</button>
+
+  <div>
+    <video id="video" autoplay playsinline style="border:1px solid #ccc;"></video>
+  </div>
+
+  <div>
+    <h2>Gemaakte foto:</h2>
+    <img id="photo" alt="Foto komt hier" />
+  </div>
+
+  <script>
+    const startCameraBtn = document.getElementById('startCameraBtn');
+    const takePhotoBtn = document.getElementById('takePhotoBtn');
+    const video = document.getElementById('video');
+    const photo = document.getElementById('photo');
+
+    let stream;
+
+    startCameraBtn.addEventListener('click', async () => {
+      try {
+        stream = await navigator.mediaDevices.getUserMedia({ video: true });
+        video.srcObject = stream;
+        takePhotoBtn.disabled = false;
+      } catch (err) {
+        alert('Kan camera niet openen: ' + err.message);
+      }
+    });
+
+    takePhotoBtn.addEventListener('click', () => {
+      if (!stream) return;
+      const canvas = document.createElement('canvas');
+      canvas.width = video.videoWidth;
+      canvas.height = video.videoHeight;
+      const ctx = canvas.getContext('2d');
+      ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+      photo.src = canvas.toDataURL('image/png');
+    });
+  </script>
+</body>
+</html>
+
