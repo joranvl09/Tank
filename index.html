@@ -2,7 +2,7 @@
 <html>
 <head>
   <meta charset="UTF-8">
-  <title>AutoSplit Kalkulator</title>
+  <title>Geef me mijn benzinegeld berekenner</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
     body {
@@ -66,7 +66,7 @@
   </style>
 </head>
 <body>
-  <h1>AutoSplit Kalkulator</h1>
+  <h1>Geef me mijn benzinegeld berekenner</h1>
 
   <label>Totale tankkosten (€):</label>
   <input type="number" id="totalPrice" value="50" inputmode="decimal" pattern="[0-9]*">
@@ -86,8 +86,8 @@
   </div>
 
   <button id="calculateBtn">Bereken</button>
-
   <div class="result" id="result"></div>
+  <button id="copyBtn" style="display:none;">Kopieer bedragen</button>
 
   <script>
     const joranInput = document.getElementById('joranInput');
@@ -96,9 +96,13 @@
     const timoList = document.getElementById('timoList');
     const calculateBtn = document.getElementById('calculateBtn');
     const result = document.getElementById('result');
+    const copyBtn = document.getElementById('copyBtn');
 
     const joranKm = [];
     const timoKm = [];
+
+    let joranPay = 0;
+    let timoPay = 0;
 
     function addJoranKm() {
       const val = parseFloat(joranInput.value);
@@ -141,10 +145,9 @@
       const joranPercent = joranTotal / totalKm;
       const timoPercent = timoTotal / totalKm;
 
-      const joranPay = (joranPercent * totalPrice).toFixed(2);
-      const timoPay = (timoPercent * totalPrice).toFixed(2);
+      joranPay = (joranPercent * totalPrice).toFixed(2);
+      timoPay = (timoPercent * totalPrice).toFixed(2);
 
-      // Namen aanpassen
       const joranName = "Big boss Joran";
       const timoName = "Sukkeltje Timo";
 
@@ -152,7 +155,20 @@
         ${joranName}: ${joranTotal} km (${(joranPercent*100).toFixed(1)}%) → €${joranPay} <br>
         ${timoName}: ${timoTotal} km (${(timoPercent*100).toFixed(1)}%) → €${timoPay}
       `;
+
+      // Toon de kopieerknop
+      copyBtn.style.display = "block";
+    });
+
+    copyBtn.addEventListener('click', () => {
+      const textToCopy = `Big boss Joran: €${joranPay}\nSukkeltje Timo: €${timoPay}`;
+      navigator.clipboard.writeText(textToCopy).then(() => {
+        alert("Bedragen gekopieerd naar klembord!");
+      }).catch(err => {
+        alert("Kopiëren mislukt: " + err);
+      });
     });
   </script>
 </body>
 </html>
+
